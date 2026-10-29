@@ -87,12 +87,13 @@ class Enrollment(models.Model):
     mode = models.CharField(max_length=5, choices=COURSE_MODES, default=AUDIT)
     rating = models.FloatField(default=5.0)
 
-# Question Model
+# Question Model (Uses text and grade)
 class Question(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    content = models.CharField(max_length=200)
+    text = models.CharField(max_length=500, default="question text")
     grade = models.IntegerField(default=1)
 
+    # Method to check if selected choice ids score full grade
     def is_get_score(self, selected_ids):
         all_answers = self.choice_set.filter(is_correct=True).count()
         selected_correct = self.choice_set.filter(is_correct=True, id__in=selected_ids).count()
@@ -102,16 +103,16 @@ class Question(models.Model):
         return False
 
     def __str__(self):
-        return "Question: " + self.content
+        return "Question: " + self.text
 
-# Choice Model
+# Choice Model (Uses text and is_correct)
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    content = models.CharField(max_length=200)
+    text = models.CharField(max_length=500, default="choice text")
     is_correct = models.BooleanField(default=False)
 
     def __str__(self):
-        return "Choice: " + self.content
+        return "Choice: " + self.text
 
 # Submission Model
 class Submission(models.Model):
@@ -119,4 +120,4 @@ class Submission(models.Model):
     choices = models.ManyToManyField(Choice)
 
     def __str__(self):
-        return "Enrollment: " + str(self.enrollment)
+        return "Enrollment: " + str(self.enrollment) + ", Choices: " + str(self.choices.all())
