@@ -40,10 +40,10 @@ def show_exam_result(request, course_id, submission_id):
         if question.is_get_score(selected_ids):
             grade += question.grade
             
-    possible_score = total_score
     context['course'] = course
     context['grade'] = grade
-    context['possible_score'] = possible_score
+    context['possible'] = total_score
+    context['possible_score'] = total_score
     context['selected_ids'] = selected_ids
     
     return render(request, 'onlinecourse/exam_result_bootstrap.html', context)
